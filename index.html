@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nail Studio — Εικονικό Μανικιούρ</title>
+<style>
+  :root{
+    --ink:#2b1526;
+    --plum:#4a1f3d;
+    --blush:#f7e9ee;
+    --cream:#fdf6f2;
+    --gold:#c9973f;
+    --rose:#d4547a;
+    --line:#e8d4dd;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--cream);color:var(--ink);
+    display:flex;flex-direction:column;
+    height:100dvh;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--plum);color:#fff;
+    padding:10px 16px 8px;
+    display:flex;align-items:baseline;gap:10px;
+    flex-shrink:0;
+  }
+  header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em}
+  header h1 .drop{color:var(--gold)}
+  header p{font-size:.72rem;opacity:.75}
+
+  /* ---------- Stage (camera / photo) ---------- */
+  #stage{
+    position:relative;flex:1;min-height:0;
+    background:#1a0e17;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #viewWrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  #video,#photoImg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:100%;max-height:100%;}
+  #overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+  #viewWrap.mirror #video,#viewWrap.mirror #overlay{transform:translate(-50%,-50%) scaleX(-1)}
+
+  /* Start / status panel */
+  #startPanel{
+    position:absolute;inset:0;z-index:5;
+    background:linear-gradient(170deg,#31142a 0%,#1a0e17 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;padding:24px;text-align:center;color:#fff;
+  }
+  #startPanel .bottle{font-size:2.6rem}
+  #startPanel h2{font-size:1.15rem;font-weight:700}
+  #startPanel p{font-size:.85rem;opacity:.8;max-width:300px;line-height:1.5}
+  .bigBtn{
+    border:none;border-radius:999px;cursor:pointer;
+    padding:13px 26px;font-size:.95rem;font-weight:700;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .bigBtn.primary{background:var(--rose);color:#fff}
+  .bigBtn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45)}
+  .bigBtn:active{transform:scale(.97)}
+
+  #statusMsg{
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    z-index:6;background:rgba(43,21,38,.85);color:#fff;
+    font-size:.78rem;padding:7px 14px;border-radius:999px;
+    max-width:92%;text-align:center;display:none;
+  }
+
+  /* Floating stage buttons */
+  .stageBtns{
+    position:absolute;right:10px;top:10px;z-index:6;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .roundBtn{
+    width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(43,21,38,.72);color:#fff;font-size:1.1rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .roundBtn:active{transform:scale(.94)}
+
+  #shotBtn{
+    position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    z-index:6;width:60px;height:60px;border-radius:50%;
+    border:4px solid #fff;background:var(--rose);cursor:pointer;display:none;
+  }
+  #shotBtn:active{transform:translateX(-50%) scale(.93)}
+
+  /* ---------- Bottom panel ---------- */
+  #panel{background:var(--blush);border-top:1px solid var(--line);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+
+  .tabs{display:flex;gap:6px;padding:9px 12px 4px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    border:1.5px solid var(--line);background:#fff;color:var(--ink);
+    border-radius:999px;padding:6px 14px;font-size:.8rem;font-weight:600;
+    white-space:nowrap;cursor:pointer;
+  }
+  .tab.active{background:var(--plum);border-color:var(--plum);color:#fff}
+
+  .swatches{
+    display:flex;gap:10px;padding:10px 12px 6px;overflow-x:auto;scrollbar-width:none;
+  }
+  .swatches::-webkit-scrollbar{display:none}
+  .swatch{
+    flex:0 0 auto;width:40px;height:40px;border-radius:50%;cursor:pointer;
+    border:2.5px solid #fff;box-shadow:0 1px 4px rgba(43,21,38,.22);
+    position:relative;
+  }
+  .swatch::after{ /* gloss sheen */
+    content:"";position:absolute;top:5px;left:8px;width:11px;height:7px;
+    border-radius:50%;background:rgba(255,255,255,.55);transform:rotate(-25deg);
+  }
+  .swatch.active{outline:3px solid var(--gold);outline-offset:2px}
+  .swatch .name{
+    position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);
+    font-size:.55rem;color:var(--ink);white-space:nowrap;opacity:.7;
+  }
+
+  .controls{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 14px 12px;flex-wrap:wrap;
+  }
+  .ctrl{display:flex;align-items:center;gap:7px;font-size:.75rem;font-weight:600}
+  input[type=range]{width:110px;accent-color:var(--rose)}
+  .toggle{
+    display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;
+  }
+  .toggle button{
+    border:none;background:transparent;padding:6px 11px;font-size:.72rem;font-weight:600;cursor:pointer;color:var(--ink);
+  }
+  .toggle button.active{background:var(--gold);color:#fff}
+
+  @media (min-width:700px){
+    .swatch{width:46px;height:46px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NAIL STUDIO <span class="drop">●</span></h1>
+  <p>Δοκίμασε βερνίκι στα νύχια σου, ζωντανά</p>
+</header>
+
+<div id="stage">
+  <div id="viewWrap">
+    <video id="video" autoplay playsinline muted></video>
+    <img id="photoImg" alt="" style="display:none">
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <div id="startPanel">
+    <div class="bottle">💅</div>
+    <h2>Καλώς ήρθες στο εικονικό μανικιούρ</h2>
+    <p>Δείξε το χέρι σου στην κάμερα και δες πώς σου πάει κάθε χρώμα. Αν η κάμερα δεν είναι διαθέσιμη, ανέβασε μια φωτογραφία του χεριού σου.</p>
+    <button class="bigBtn primary" id="startCamBtn">📷 Άνοιγμα κάμερας</button>
+    <button class="bigBtn ghost" id="uploadBtn1">🖼️ Ανέβασε φωτογραφία</button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+  </div>
+
+  <div id="statusMsg"></div>
+
+  <div class="stageBtns" id="stageBtns" style="display:none">
+    <button class="roundBtn" id="flipBtn" title="Αλλαγή κάμερας">🔄</button>
+    <button class="roundBtn" id="uploadBtn2" title="Φωτογραφία">🖼️</button>
+    <button class="roundBtn" id="closeBtn" title="Κλείσιμο">✕</button>
+  </div>
+
+  <button id="shotBtn" title="Λήψη φωτογραφίας"></button>
+</div>
+
+<div id="panel">
+  <div class="tabs" id="effectTabs">
+    <button class="tab active" data-effect="plain">Απλό</button>
+    <button class="tab" data-effect="french">Γαλλικό</button>
+    <button class="tab" data-effect="glitter">Glitter</button>
+    <button class="tab" data-effect="ombre">Ombre</button>
+  </div>
+
+  <div class="swatches" id="swatches"></div>
+
+  <div class="controls">
+    <div class="ctrl">
+      <span>Μέγεθος</span>
+      <input type="range" id="sizeSlider" min="0.6" max="1.6" step="0.05" value="1">
+    </div>
+    <div class="ctrl">
+      <span>Φινίρισμα</span>
+      <div class="toggle" id="finishToggle">
+        <button class="active" data-finish="gloss">Γυαλιστερό</button>
+        <button data-finish="matte">Ματ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MediaPipe Hands -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Palette ---------------- */
+  var COLORS = [
+    {n:"Κλασικό κόκκινο", c:"#c1121f"},
+    {n:"Κεράσι",          c:"#8f0f1e"},
+    {n:"Μπορντό",         c:"#5e0b23"},
+    {n:"Κρασί",           c:"#722f4b"},
+    {n:"Κοραλί",          c:"#f26b5b"},
+    {n:"Ροδακινί",        c:"#f4a58a"},
+    {n:"Nude",            c:"#d9b3a0"},
+    {n:"Ροζ απαλό",       c:"#f2c1cf"},
+    {n:"Έντονο ροζ",      c:"#e83e8c"},
+    {n:"Φούξια",          c:"#b5179e"},
+    {n:"Λεβάντα",         c:"#b39ddb"},
+    {n:"Λιλά",            c:"#8e6bbf"},
+    {n:"Μπλε ναυτικό",    c:"#1d3557"},
+    {n:"Γαλάζιο",         c:"#7bbcd5"},
+    {n:"Πετρόλ",          c:"#0f766e"},
+    {n:"Σμαραγδί",        c:"#0e7a45"},
+    {n:"Μαύρο",           c:"#161215"},
+    {n:"Λευκό",           c:"#f5f2f0"},
+    {n:"Χρυσό",           c:"#c9973f"},
+    {n:"Ασημί",           c:"#a8aab0"},
+    {n:"Σοκολατί",        c:"#5b3a29"}
+  ];
+
+  var state = {
+    color: COLORS[0].c,
+    effect: "plain",
+    size: 1,
+    finish: "gloss",
+    mode: "none",          // none | camera | photo
+    facing: "environment", // environment | user
+    stream: null,
+    running: false
+  };
+
+  /* ---------------- DOM ---------------- */
+  var video   = document.getElementById("video");
+  var photoImg= document.getElementById("photoImg");
+  var overlay = document.getElementById("overlay");
+  var ctx     = overlay.getContext("2d");
+  var viewWrap= document.getElementById("viewWrap");
+  var startPanel = document.getElementById("startPanel");
+  var statusMsg  = document.getElementById("statusMsg");
+  var stageBtns  = document.getElementById("stageBtns");
+  var shotBtn    = document.getElementById("shotBtn");
+  var fileInput  = document.getElementById("fileInput");
+
+  function showStatus(t, ms){
+    statusMsg.textContent = t;
+    statusMsg.style.display = "block";
+    if (ms) setTimeout(function(){ statusMsg.style.display = "none"; }, ms);
+  }
+  function hideStatus(){ statusMsg.style.display = "none"; }
+
+  /* ---------------- Swatches UI ---------------- */
+  var swBox = document.getElementById("swatches");
+  COLORS.forEach(function(col, i){
+    var d = document.createElement("div");
+    d.className = "swatch" + (i===0 ? " active" : "");
+    d.style.background = col.c;
+    d.title = col.n;
+    d.addEventListener("click", function(){
+      state.color = col.c;
+      swBox.querySelectorAll(".swatch").forEach(function(s){ s.classList.remove("active"); });
+      d.classList.add("active");
+      if (state.mode === "photo") processPhoto();
+    });
+    swBox.appendChild(d);
+  });
+
+  document.getElementById("effectTabs").addEventListener("click", function(e){
+    var t = e.target.closest(".tab");
+    if (!t) return;
+    state.effect = t.dataset.effect;
+    this.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
+    t.classList.add("active");
+    if (state.mode === "photo") processPhoto();
+  });
+
+  document.getElementById("sizeSlider").addEventListener("input", function(){
+    state.size = parseFloat(this.value);
+    if (state.mode === "photo") drawPhotoFrame();
+  });
+
+  document.getElementById("finishToggle").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b) return;
+    state.finish = b.dataset.finish;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    if (state.mode === "photo") drawPhotoFrame();
+  });
+
+  /* ---------------- MediaPipe Hands ---------------- */
+  var hands = null;
+  var lastResults = null;
+
+  function initHands(){
+    if (hands) return hands;
+    hands = new Hands({
+      locateFile: function(f){
+        return "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" + f;
+      }
+    });
+    hands.setOptions({
+      maxNumHands: 2,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.5
+    });
+    hands.onResults(onResults);
+    return hands;
+  }
+
+  function onResults(results){
+    lastResults = results;
+    if (state.mode === "camera") drawFrame(video.videoWidth, video.videoHeight);
+    else if (state.mode === "photo") drawPhotoFrame();
+  }
+
+  /* ---------------- Camera ---------------- */
+  document.getElementById("startCamBtn").addEventListener("click", startCamera);
+  document.getElementById("flipBtn").addEventListener("click", function(){
+    state.facing = (state.facing === "environment") ? "user" : "environment";
+    startCamera();
+  });
+  document.getElementById("closeBtn").addEventListener("click", stopAll);
+  document.getElementById("uploadBtn1").addEventListener("click", function(){ fileInput.click(); });
+  document.getElementById("uploadBtn2").addEventListener("click", function(){ fileInput.click(); });
+
+  function stopStream(){
+    if (state.stream){
+      state.stream.getTracks().forEach(function(t){ t.stop(); });
+      state.stream = null;
+    }
+  }
+
+  function startCamera(){
+    stopStream();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      showStatus("Η κάμερα δεν υποστηρίζεται εδώ. Δοκίμασε ανέβασμα φωτογραφίας.", 5000);
+      return;
+    }
+    showStatus("Άνοιγμα κάμερας…");
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: state.facing, width:{ideal:1280}, height:{ideal:720} },
+      audio: false
+    }).then(function(stream){
+      state.stream = stream;
+      state.mode = "camera";
+      video.srcObject = stream;
+      video.style.display = "";
+      photoImg.style.display = "none";
+      startPanel.style.display = "none";
+      stageBtns.style.display = "flex";
+      shotBtn.style.display = "block";
+      viewWrap.classList.toggle("mirror", state.facing === "user");
+      video.onloadedmetadata = function(){
+        video.play();
+        overlay.width = video.videoWidth;
+        overlay.height = video.videoHeight;
+        fitElement(video); fitElement(overlay);
+        hideStatus();
+        showStatus("Δείξε τα νύχια σου στην κάμερα 👋", 3500);
+        state.running = true;
+        loop();
+      };
+    }).catch(function(err){
+      console.error(err);
+      var msg = "Δεν επιτράπηκε η πρόσβαση στην κάμερα.";
+      if (location.protocol !== "https:" && location.hostname !== "localhost")
+        msg += " Χρειάζεται σύνδεση HTTPS.";
+      msg += " Μπορείς να ανεβάσεις φωτογραφία.";
+      showStatus(msg, 6000);
+    });
+  }
+
+  function fitElement(el){
+    // scale to contain within stage keeping aspect
+    var st = document.getElementById("stage");
+    var sw = st.clientWidth, sh = st.clientHeight;
+    var vw = overlay.width, vh = overlay.height;
+    if (!vw || !vh) return;
+    var sc = Math.min(sw/vw, sh/vh);
+    el.style.width  = (vw*sc) + "px";
+    el.style.height = (vh*sc) + "px";
+  }
+  window.addEventListener("resize", function(){
+    fitElement(video); fitElement(overlay); fitElement(photoImg);
+  });
+
+  var busy = false;
+  function loop(){
+    if (!state.running || state.mode !== "camera") return;
+    if (!busy && video.readyState >= 2){
+      busy = true;
+      initHands().send({image: video}).then(function(){ busy = false; })
+        .catch(function(){ busy = false; });
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function stopAll(){
+    state.running = false;
+    state.mode = "none";
+    stopStream();
+    video.style.display = "none";
+    photoImg.style.display = "none";
+    ctx.clearRect(0,0,overlay.width,overlay.height);
+    stageBtns.style.display = "none";
+    shotBtn.style.display = "none";
+    startPanel.style.display = "flex";
+    hideStatus();
+  }
+
+  /* ---------------- Photo mode ---------------- */
+  fileInput.addEventListener("change", function(){
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var url = URL.createObjectURL(f);
+    photoImg.onload = function(){
+      state.running = false;
+      stopStream();
+      state.mode = "photo";
+      video.style.display = "none";
+      photoImg.style.display = "";
+      startPanel.style.display = "none";
+      stageBtns.style.display = "flex";
+      shotBtn.style.display = "block";
+      viewWrap.classList.remove("mirror");
+      overlay.width = photoImg.naturalWidth;
+      overlay.height = photoImg.naturalHeight;
+      fitElement(photoImg); fitElement(overlay);
+      showStatus("Ανάλυση φωτογραφίας…");
+      processPhoto();
+    };
+    photoImg.src = url;
+    this.value = "";
+  });
+
+  function processPhoto(){
+    if (state.mode !== "photo") return;
+    initHands().send({image: photoImg}).then(function(){
+      hideStatus();
+      if (!lastResults || !lastResults.multiHandLandmarks || !lastResults.multiHandLandmarks.length){
+        showStatus("Δεν εντοπίστηκε χέρι. Δοκίμασε πιο καθαρή φωτογραφία με ανοιχτή παλάμη.", 5000);
+      }
+    }).catch(function(e){
+      console.error(e);
+      showStatus("Σφάλμα ανάλυσης. Έλεγξε τη σύνδεση (φορτώνεται το μοντέλο).", 5000);
+    });
+  }
+
+  function drawPhotoFrame(){
+    drawFrame(overlay.width, overlay.height);
+  }
+
+  /* ---------------- Nail rendering ---------------- */
+  // fingertip landmark index -> joint below it
+  var FINGERS = [
+    {tip:4,  low:3,  wMul:1.15}, // thumb
+    {tip:8,  low:7,  wMul:1.0},
+    {tip:12, low:11, wMul:1.05},
+    {tip:16, low:15, wMul:1.0},
+    {tip:20, low:19, wMul:0.9}
+  ];
+
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function shade(hex, amt){ // amt -1..1
+    var n = parseInt(hex.slice(1),16);
+    var r = (n>>16)&255, g = (n>>8)&255, b = n&255;
+    function ch(v){ return Math.max(0, Math.min(255, Math.round(amt>0 ? v+(255-v)*amt : v*(1+amt)))); }
+    return "rgb(" + ch(r) + "," + ch(g) + "," + ch(b) + ")";
+  }
+
+  function drawFrame(w, h){
+    if (!w || !h) return;
+    ctx.clearRect(0,0,w,h);
+    if (!lastResults || !lastResults.multiHandLandmarks) return;
+
+    lastResults.multiHandLandmarks.forEach(function(lm, hi){
+      FINGERS.forEach(function(f, fi){
+        var tip = lm[f.tip], low = lm[f.low];
+        var tx = tip.x*w, ty = tip.y*h;
+        var lx = low.x*w, ly = low.y*h;
+        var dx = tx-lx, dy = ty-ly;
+        var len = Math.sqrt(dx*dx+dy*dy);
+        if (len < 4) return;
+        var ux = dx/len, uy = dy/len;
+
+        var nh = len*0.85*state.size;            // nail height (along finger)
+        var nw = len*0.62*state.size*f.wMul;     // nail width
+        var cx = tx + ux*nh*0.12;
+        var cy = ty + uy*nh*0.12;
+        var ang = Math.atan2(dy,dx) + Math.PI/2;
+
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(ang);
+        drawNail(nw, nh, hi, fi);
+        ctx.restore();
+      });
+    });
+  }
+
+  function nailPath(nw, nh){
+    // rounded nail shape: flatter base, round tip (tip is at -y)
+    ctx.beginPath();
+    ctx.moveTo(-nw/2, nh*0.32);
+    ctx.quadraticCurveTo(-nw/2, -nh*0.5, 0, -nh*0.5);
+    ctx.quadraticCurveTo(nw/2, -nh*0.5, nw/2, nh*0.32);
+    ctx.quadraticCurveTo(nw/2*0.8, nh*0.5, 0, nh*0.5);
+    ctx.quadraticCurveTo(-nw/2*0.8, nh*0.5, -nw/2, nh*0.32);
+    ctx.closePath();
+  }
+
+  function drawNail(nw, nh, handIdx, fingerIdx){
+    var col = state.color;
+    ctx.globalAlpha = 0.88;
+
+    nailPath(nw, nh);
+    ctx.save();
+    ctx.clip();
+
+    if (state.effect === "plain"){
+      ctx.fillStyle = col;
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+    }
+    else if (state.effect === "french"){
+      ctx.fillStyle = "rgba(224,190,175,0.75)"; // nude base
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.ellipse(0, -nh*0.52, nw*0.75, nh*0.34, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+    else if (state.effect === "ombre"){
+      var g = ctx.createLinearGradient(0, nh/2, 0, -nh/2);
+      g.addColorStop(0, shade(col, 0.55));
+      g.addColorStop(1, col);
+      ctx.fillStyle = g;
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+    }
+    else if (state.effect === "glitter"){
+      ctx.fillStyle = col;
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+      var rnd = mulberry32(handIdx*97 + fingerIdx*31 + 7);
+      var t = Date.now()/450;
+      for (var i=0; i<16; i++){
+        var px = (rnd()-0.5)*nw*0.9;
+        var py = (rnd()-0.5)*nh*0.9;
+        var pr = 0.6 + rnd()*1.4;
+        var tw = 0.45 + 0.55*Math.abs(Math.sin(t + i*1.7));
+        ctx.fillStyle = "rgba(255,255,255," + (tw*0.9).toFixed(2) + ")";
+        ctx.beginPath();
+        ctx.arc(px, py, pr * Math.max(nw/26,1), 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // gloss highlight
+    if (state.finish === "gloss"){
+      ctx.fillStyle = "rgba(255,255,255,0.32)";
+      ctx.beginPath();
+      ctx.ellipse(-nw*0.18, -nh*0.16, nw*0.22, nh*0.3, -0.35, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    // soft outline for definition
+    ctx.globalAlpha = 0.45;
+    nailPath(nw, nh);
+    ctx.strokeStyle = shade(col, -0.35);
+    ctx.lineWidth = Math.max(nw/22, 0.8);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------------- Screenshot ---------------- */
+  shotBtn.addEventListener("click", function(){
+    var w = overlay.width, h = overlay.height;
+    if (!w || !h) return;
+    var c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    var cc = c.getContext("2d");
+    var mirrored = viewWrap.classList.contains("mirror");
+    if (mirrored){ cc.translate(w,0); cc.scale(-1,1); }
+    if (state.mode === "camera") cc.drawImage(video, 0, 0, w, h);
+    else if (state.mode === "photo") cc.drawImage(photoImg, 0, 0, w, h);
+    cc.drawImage(overlay, 0, 0);
+    var a = document.createElement("a");
+    a.download = "nail-studio.png";
+    a.href = c.toDataURL("image/png");
+    a.click();
+    showStatus("Η φωτογραφία αποθηκεύτηκε 📸", 2500);
+  });
+
+})();
+</script>
+</body>
+</html>
