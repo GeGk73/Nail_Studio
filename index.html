@@ -4,6 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Nail Studio — Εικονικό Μανικιούρ</title>
+
+<!-- ═══════════════ ANALYTICS (μέτρηση επισκεψιμότητας) ═══════════════
+  ΕΠΙΛΟΓΗ 1 — GoatCounter (εντελώς ΔΩΡΕΑΝ, χωρίς cookies, χωρίς GDPR banner):
+  1. Κάνε εγγραφή στο https://www.goatcounter.com (2 λεπτά)
+  2. Διάλεξε ένα όνομα, π.χ. "nailstudio" → παίρνεις το nailstudio.goatcounter.com
+  3. Αντικατέστησε το MYCODE παρακάτω με το όνομα που διάλεξες
+  4. Στατιστικά: https://MYCODE.goatcounter.com
+-->
+<script data-goatcounter="https://MYCODE.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<!-- ΕΠΙΛΟΓΗ 2 — Google Analytics 4 (δωρεάν, πιο αναλυτικό, θέλει GDPR banner):
+  1. Λογαριασμός στο https://analytics.google.com → Create property
+  2. Πάρε το Measurement ID (μορφή G-XXXXXXXXXX)
+  3. Σβήσε τα σύμβολα σχολίων και βάλε το ID σου στα 2 σημεία
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+-->
+<!-- ═══════════════════════ ΤΕΛΟΣ ANALYTICS ═══════════════════════ -->
 <style>
   :root{
     --ink:#2b1526;
@@ -30,9 +55,26 @@
     display:flex;align-items:baseline;gap:10px;
     flex-shrink:0;
   }
-  header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em}
-  header h1 .drop{color:var(--gold)}
+  header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+  header h1 .logoIcon{flex-shrink:0}
   header p{font-size:.72rem;opacity:.75}
+  #langBtn{
+    margin-left:auto;flex-shrink:0;cursor:pointer;
+    border:1.5px solid rgba(255,255,255,.45);background:transparent;color:#fff;
+    border-radius:999px;padding:4px 12px;font-size:.75rem;font-weight:700;letter-spacing:.05em;
+  }
+  #langBtn:active{transform:scale(.95)}
+
+  /* Nail-themed background pattern (light strokes for dark bg, plum for blush bg) */
+  .nailPatternDark{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'><g fill='none' stroke='white' stroke-opacity='0.09' stroke-width='1.6' stroke-linejoin='round'><g transform='translate(24,18)'><rect x='3' y='0' width='10' height='8' rx='2'/><path d='M4 12 q0-3 3-3 h2 q3 0 3 3 v10 q0 5 -4 5 q-4 0 -4 -5 z'/></g><path d='M100 22 q8 13 0 20 q-8 -7 0 -20 z'/><path d='M40 92 q9 0 9 15 q0 9 -9 12 q-9 -3 -9 -12 q0 -15 9 -15 z'/><path d='M108 96 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 z'/><path d='M78 130 q6 0 6 10 q0 6 -6 8 q-6 -2 -6 -8 q0 -10 6 -10 z'/></g></svg>"),
+    linear-gradient(170deg,#31142a 0%,#1a0e17 100%);
+    background-size:150px 150px, cover;
+  }
+  .nailPatternLight{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'><g fill='none' stroke='%234a1f3d' stroke-opacity='0.06' stroke-width='1.6' stroke-linejoin='round'><g transform='translate(24,18)'><rect x='3' y='0' width='10' height='8' rx='2'/><path d='M4 12 q0-3 3-3 h2 q3 0 3 3 v10 q0 5 -4 5 q-4 0 -4 -5 z'/></g><path d='M100 22 q8 13 0 20 q-8 -7 0 -20 z'/><path d='M40 92 q9 0 9 15 q0 9 -9 12 q-9 -3 -9 -12 q0 -15 9 -15 z'/><path d='M108 96 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 z'/><path d='M78 130 q6 0 6 10 q0 6 -6 8 q-6 -2 -6 -8 q0 -10 6 -10 z'/></g></svg>");
+    background-size:150px 150px;
+  }
 
   /* ---------- Stage (camera / photo) ---------- */
   #stage{
@@ -48,7 +90,6 @@
   /* Start / status panel */
   #startPanel{
     position:absolute;inset:0;z-index:5;
-    background:linear-gradient(170deg,#31142a 0%,#1a0e17 100%);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:14px;padding:24px;text-align:center;color:#fff;
   }
@@ -93,8 +134,9 @@
   /* ---------- Bottom panel ---------- */
   #panel{background:var(--blush);border-top:1px solid var(--line);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
 
-  .tabs{display:flex;gap:6px;padding:9px 12px 4px;overflow-x:auto;scrollbar-width:none}
+  .tabs{display:flex;gap:6px;padding:8px 12px 2px;overflow-x:auto;scrollbar-width:none;align-items:center}
   .tabs::-webkit-scrollbar{display:none}
+  .rowLabel{font-size:.68rem;font-weight:700;color:var(--plum);opacity:.65;flex:0 0 auto;width:46px}
   .tab{
     border:1.5px solid var(--line);background:#fff;color:var(--ink);
     border-radius:999px;padding:6px 14px;font-size:.8rem;font-weight:600;
@@ -143,8 +185,17 @@
 <body>
 
 <header>
-  <h1>NAIL STUDIO <span class="drop">●</span></h1>
-  <p>Δοκίμασε βερνίκι στα νύχια σου, ζωντανά</p>
+  <h1>
+    <svg class="logoIcon" viewBox="0 0 24 34" width="19" height="27" aria-hidden="true">
+      <rect x="8" y="0" width="8" height="9" rx="2" fill="#c9973f"/>
+      <rect x="10.5" y="8" width="3" height="6" fill="#a87c2f"/>
+      <path d="M5 16 q0 -4 4 -4 h6 q4 0 4 4 v11 q0 6 -7 6 q-7 0 -7 -6 z" fill="#d4547a"/>
+      <ellipse cx="9.5" cy="22" rx="2" ry="4" fill="rgba(255,255,255,.4)"/>
+    </svg>
+    NAIL STUDIO
+  </h1>
+  <p data-i18n="tagline">Δοκίμασε βερνίκι στα νύχια σου, ζωντανά</p>
+  <button id="langBtn" title="Language">EN</button>
 </header>
 
 <div id="stage">
@@ -154,12 +205,26 @@
     <canvas id="overlay"></canvas>
   </div>
 
-  <div id="startPanel">
-    <div class="bottle">💅</div>
-    <h2>Καλώς ήρθες στο εικονικό μανικιούρ</h2>
-    <p>Δείξε το χέρι σου στην κάμερα και δες πώς σου πάει κάθε χρώμα. Αν η κάμερα δεν είναι διαθέσιμη, ανέβασε μια φωτογραφία του χεριού σου.</p>
-    <button class="bigBtn primary" id="startCamBtn">📷 Άνοιγμα κάμερας</button>
-    <button class="bigBtn ghost" id="uploadBtn1">🖼️ Ανέβασε φωτογραφία</button>
+  <div id="startPanel" class="nailPatternDark">
+    <div class="bottle">
+      <svg viewBox="0 0 60 46" width="110" height="84" aria-hidden="true">
+        <!-- polish bottle -->
+        <g transform="translate(6,2)">
+          <rect x="9" y="0" width="10" height="11" rx="2.5" fill="#c9973f"/>
+          <rect x="12" y="10" width="4" height="7" fill="#a87c2f"/>
+          <path d="M5 21 q0 -5 5 -5 h8 q5 0 5 5 v13 q0 8 -9 8 q-9 0 -9 -8 z" fill="#d4547a"/>
+          <ellipse cx="11" cy="29" rx="2.6" ry="5" fill="rgba(255,255,255,.4)"/>
+        </g>
+        <!-- drop -->
+        <path d="M44 14 q6 10 0 15 q-6 -5 0 -15 z" fill="#c9973f"/>
+        <!-- sparkle -->
+        <path d="M52 32 l1.8 4.4 l4.4 1.8 l-4.4 1.8 l-1.8 4.4 l-1.8 -4.4 l-4.4 -1.8 l4.4 -1.8 z" fill="#f2c1cf"/>
+      </svg>
+    </div>
+    <h2 data-i18n="welcomeTitle">Καλώς ήρθες στο εικονικό μανικιούρ</h2>
+    <p data-i18n="welcomeText">Δείξε το χέρι σου στην κάμερα και δες πώς σου πάει κάθε χρώμα. Αν η κάμερα δεν είναι διαθέσιμη, ανέβασε μια φωτογραφία του χεριού σου.</p>
+    <button class="bigBtn primary" id="startCamBtn" data-i18n="openCamera">📷 Άνοιγμα κάμερας</button>
+    <button class="bigBtn ghost" id="uploadBtn1" data-i18n="uploadPhoto">🖼️ Ανέβασε φωτογραφία</button>
     <input type="file" id="fileInput" accept="image/*" style="display:none">
   </div>
 
@@ -174,26 +239,38 @@
   <button id="shotBtn" title="Λήψη φωτογραφίας"></button>
 </div>
 
-<div id="panel">
+<div id="panel" class="nailPatternLight">
   <div class="tabs" id="effectTabs">
-    <button class="tab active" data-effect="plain">Απλό</button>
-    <button class="tab" data-effect="french">Γαλλικό</button>
+    <span class="rowLabel" data-i18n="effect">Εφέ</span>
+    <button class="tab active" data-effect="plain" data-i18n="plain">Απλό</button>
+    <button class="tab" data-effect="french" data-i18n="french">Γαλλικό</button>
     <button class="tab" data-effect="glitter">Glitter</button>
     <button class="tab" data-effect="ombre">Ombre</button>
+  </div>
+
+  <div class="tabs" id="shapeTabs">
+    <span class="rowLabel" data-i18n="shape">Σχήμα</span>
+    <button class="tab active" data-shape="oval" data-i18n="oval">Οβάλ</button>
+    <button class="tab" data-shape="round" data-i18n="round">Στρογγυλό</button>
+    <button class="tab" data-shape="square" data-i18n="square">Τετράγωνο</button>
+    <button class="tab" data-shape="squoval">Squoval</button>
+    <button class="tab" data-shape="almond" data-i18n="almond">Αμύγδαλο</button>
+    <button class="tab" data-shape="stiletto" data-i18n="stiletto">Στιλέτο</button>
+    <button class="tab" data-shape="coffin" data-i18n="coffin">Μπαλαρίνα</button>
   </div>
 
   <div class="swatches" id="swatches"></div>
 
   <div class="controls">
     <div class="ctrl">
-      <span>Μέγεθος</span>
+      <span data-i18n="size">Μέγεθος</span>
       <input type="range" id="sizeSlider" min="0.6" max="1.6" step="0.05" value="1">
     </div>
     <div class="ctrl">
-      <span>Φινίρισμα</span>
+      <span data-i18n="finish">Φινίρισμα</span>
       <div class="toggle" id="finishToggle">
-        <button class="active" data-finish="gloss">Γυαλιστερό</button>
-        <button data-finish="matte">Ματ</button>
+        <button class="active" data-finish="gloss" data-i18n="gloss">Γυαλιστερό</button>
+        <button data-finish="matte" data-i18n="matte">Ματ</button>
       </div>
     </div>
   </div>
@@ -206,34 +283,86 @@
 (function(){
   "use strict";
 
+  /* ---------------- i18n ---------------- */
+  var I18N = {
+    el: {
+      tagline:"Δοκίμασε βερνίκι στα νύχια σου, ζωντανά",
+      welcomeTitle:"Καλώς ήρθες στο εικονικό μανικιούρ",
+      welcomeText:"Δείξε το χέρι σου στην κάμερα και δες πώς σου πάει κάθε χρώμα. Αν η κάμερα δεν είναι διαθέσιμη, ανέβασε μια φωτογραφία του χεριού σου.",
+      openCamera:"📷 Άνοιγμα κάμερας",
+      uploadPhoto:"🖼️ Ανέβασε φωτογραφία",
+      effect:"Εφέ", shape:"Σχήμα",
+      plain:"Απλό", french:"Γαλλικό",
+      oval:"Οβάλ", round:"Στρογγυλό", square:"Τετράγωνο",
+      almond:"Αμύγδαλο", stiletto:"Στιλέτο", coffin:"Μπαλαρίνα",
+      size:"Μέγεθος", finish:"Φινίρισμα", gloss:"Γυαλιστερό", matte:"Ματ",
+      flipCam:"Αλλαγή κάμερας", photoBtn:"Φωτογραφία", closeBtn:"Κλείσιμο", shot:"Λήψη φωτογραφίας",
+      openingCam:"Άνοιγμα κάμερας…",
+      showNails:"Δείξε τα νύχια σου στην κάμερα 👋",
+      camDenied:"Δεν επιτράπηκε η πρόσβαση στην κάμερα.",
+      needHttps:" Χρειάζεται σύνδεση HTTPS.",
+      tryUpload:" Μπορείς να ανεβάσεις φωτογραφία.",
+      noCamSupport:"Η κάμερα δεν υποστηρίζεται εδώ. Δοκίμασε ανέβασμα φωτογραφίας.",
+      analyzing:"Ανάλυση φωτογραφίας…",
+      noHand:"Δεν εντοπίστηκε χέρι. Δοκίμασε πιο καθαρή φωτογραφία με ανοιχτή παλάμη.",
+      analyzeError:"Σφάλμα ανάλυσης. Έλεγξε τη σύνδεση (φορτώνεται το μοντέλο).",
+      saved:"Η φωτογραφία αποθηκεύτηκε 📸"
+    },
+    en: {
+      tagline:"Try nail polish on your nails, live",
+      welcomeTitle:"Welcome to the virtual manicure",
+      welcomeText:"Show your hand to the camera and see how each color suits you. If the camera isn't available, upload a photo of your hand.",
+      openCamera:"📷 Open camera",
+      uploadPhoto:"🖼️ Upload a photo",
+      effect:"Effect", shape:"Shape",
+      plain:"Plain", french:"French",
+      oval:"Oval", round:"Round", square:"Square",
+      almond:"Almond", stiletto:"Stiletto", coffin:"Coffin",
+      size:"Size", finish:"Finish", gloss:"Glossy", matte:"Matte",
+      flipCam:"Switch camera", photoBtn:"Photo", closeBtn:"Close", shot:"Take a photo",
+      openingCam:"Opening camera…",
+      showNails:"Show your nails to the camera 👋",
+      camDenied:"Camera access was denied.",
+      needHttps:" An HTTPS connection is required.",
+      tryUpload:" You can upload a photo instead.",
+      noCamSupport:"Camera is not supported here. Try uploading a photo.",
+      analyzing:"Analyzing photo…",
+      noHand:"No hand detected. Try a clearer photo with an open palm.",
+      analyzeError:"Analysis error. Check your connection (the model is loading).",
+      saved:"Photo saved 📸"
+    }
+  };
+
   /* ---------------- Palette ---------------- */
   var COLORS = [
-    {n:"Κλασικό κόκκινο", c:"#c1121f"},
-    {n:"Κεράσι",          c:"#8f0f1e"},
-    {n:"Μπορντό",         c:"#5e0b23"},
-    {n:"Κρασί",           c:"#722f4b"},
-    {n:"Κοραλί",          c:"#f26b5b"},
-    {n:"Ροδακινί",        c:"#f4a58a"},
-    {n:"Nude",            c:"#d9b3a0"},
-    {n:"Ροζ απαλό",       c:"#f2c1cf"},
-    {n:"Έντονο ροζ",      c:"#e83e8c"},
-    {n:"Φούξια",          c:"#b5179e"},
-    {n:"Λεβάντα",         c:"#b39ddb"},
-    {n:"Λιλά",            c:"#8e6bbf"},
-    {n:"Μπλε ναυτικό",    c:"#1d3557"},
-    {n:"Γαλάζιο",         c:"#7bbcd5"},
-    {n:"Πετρόλ",          c:"#0f766e"},
-    {n:"Σμαραγδί",        c:"#0e7a45"},
-    {n:"Μαύρο",           c:"#161215"},
-    {n:"Λευκό",           c:"#f5f2f0"},
-    {n:"Χρυσό",           c:"#c9973f"},
-    {n:"Ασημί",           c:"#a8aab0"},
-    {n:"Σοκολατί",        c:"#5b3a29"}
+    {el:"Κλασικό κόκκινο", en:"Classic red",  c:"#c1121f"},
+    {el:"Κεράσι",          en:"Cherry",       c:"#8f0f1e"},
+    {el:"Μπορντό",         en:"Burgundy",     c:"#5e0b23"},
+    {el:"Κρασί",           en:"Wine",         c:"#722f4b"},
+    {el:"Κοραλί",          en:"Coral",        c:"#f26b5b"},
+    {el:"Ροδακινί",        en:"Peach",        c:"#f4a58a"},
+    {el:"Nude",            en:"Nude",         c:"#d9b3a0"},
+    {el:"Ροζ απαλό",       en:"Soft pink",    c:"#f2c1cf"},
+    {el:"Έντονο ροζ",      en:"Hot pink",     c:"#e83e8c"},
+    {el:"Φούξια",          en:"Fuchsia",      c:"#b5179e"},
+    {el:"Λεβάντα",         en:"Lavender",     c:"#b39ddb"},
+    {el:"Λιλά",            en:"Lilac",        c:"#8e6bbf"},
+    {el:"Μπλε ναυτικό",    en:"Navy blue",    c:"#1d3557"},
+    {el:"Γαλάζιο",         en:"Sky blue",     c:"#7bbcd5"},
+    {el:"Πετρόλ",          en:"Teal",         c:"#0f766e"},
+    {el:"Σμαραγδί",        en:"Emerald",      c:"#0e7a45"},
+    {el:"Μαύρο",           en:"Black",        c:"#161215"},
+    {el:"Λευκό",           en:"White",        c:"#f5f2f0"},
+    {el:"Χρυσό",           en:"Gold",         c:"#c9973f"},
+    {el:"Ασημί",           en:"Silver",       c:"#a8aab0"},
+    {el:"Σοκολατί",        en:"Chocolate",    c:"#5b3a29"}
   ];
 
   var state = {
+    lang: "el",
     color: COLORS[0].c,
     effect: "plain",
+    shape: "oval",
     size: 1,
     finish: "gloss",
     mode: "none",          // none | camera | photo
@@ -261,13 +390,36 @@
   }
   function hideStatus(){ statusMsg.style.display = "none"; }
 
+  /* ---------------- Language ---------------- */
+  function t(key){ return I18N[state.lang][key] || key; }
+
+  function applyLang(){
+    document.documentElement.lang = state.lang;
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.getElementById("langBtn").textContent = (state.lang === "el") ? "EN" : "ΕΛ";
+    document.getElementById("flipBtn").title = t("flipCam");
+    document.getElementById("uploadBtn2").title = t("photoBtn");
+    document.getElementById("closeBtn").title = t("closeBtn");
+    shotBtn.title = t("shot");
+    // swatch tooltips
+    var sws = swBox.querySelectorAll(".swatch");
+    sws.forEach(function(s, i){ s.title = COLORS[i][state.lang]; });
+  }
+
+  document.getElementById("langBtn").addEventListener("click", function(){
+    state.lang = (state.lang === "el") ? "en" : "el";
+    applyLang();
+  });
+
   /* ---------------- Swatches UI ---------------- */
   var swBox = document.getElementById("swatches");
   COLORS.forEach(function(col, i){
     var d = document.createElement("div");
     d.className = "swatch" + (i===0 ? " active" : "");
     d.style.background = col.c;
-    d.title = col.n;
+    d.title = col[state.lang];
     d.addEventListener("click", function(){
       state.color = col.c;
       swBox.querySelectorAll(".swatch").forEach(function(s){ s.classList.remove("active"); });
@@ -284,6 +436,15 @@
     this.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
     t.classList.add("active");
     if (state.mode === "photo") processPhoto();
+  });
+
+  document.getElementById("shapeTabs").addEventListener("click", function(e){
+    var t = e.target.closest(".tab");
+    if (!t) return;
+    state.shape = t.dataset.shape;
+    this.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
+    t.classList.add("active");
+    if (state.mode === "photo") drawPhotoFrame();
   });
 
   document.getElementById("sizeSlider").addEventListener("input", function(){
@@ -347,10 +508,10 @@
   function startCamera(){
     stopStream();
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      showStatus("Η κάμερα δεν υποστηρίζεται εδώ. Δοκίμασε ανέβασμα φωτογραφίας.", 5000);
+      showStatus(t("noCamSupport"), 5000);
       return;
     }
-    showStatus("Άνοιγμα κάμερας…");
+    showStatus(t("openingCam"));
     navigator.mediaDevices.getUserMedia({
       video: { facingMode: state.facing, width:{ideal:1280}, height:{ideal:720} },
       audio: false
@@ -370,16 +531,16 @@
         overlay.height = video.videoHeight;
         fitElement(video); fitElement(overlay);
         hideStatus();
-        showStatus("Δείξε τα νύχια σου στην κάμερα 👋", 3500);
+        showStatus(t("showNails"), 3500);
         state.running = true;
         loop();
       };
     }).catch(function(err){
       console.error(err);
-      var msg = "Δεν επιτράπηκε η πρόσβαση στην κάμερα.";
+      var msg = t("camDenied");
       if (location.protocol !== "https:" && location.hostname !== "localhost")
-        msg += " Χρειάζεται σύνδεση HTTPS.";
-      msg += " Μπορείς να ανεβάσεις φωτογραφία.";
+        msg += t("needHttps");
+      msg += t("tryUpload");
       showStatus(msg, 6000);
     });
   }
@@ -440,7 +601,7 @@
       overlay.width = photoImg.naturalWidth;
       overlay.height = photoImg.naturalHeight;
       fitElement(photoImg); fitElement(overlay);
-      showStatus("Ανάλυση φωτογραφίας…");
+      showStatus(t("analyzing"));
       processPhoto();
     };
     photoImg.src = url;
@@ -452,11 +613,11 @@
     initHands().send({image: photoImg}).then(function(){
       hideStatus();
       if (!lastResults || !lastResults.multiHandLandmarks || !lastResults.multiHandLandmarks.length){
-        showStatus("Δεν εντοπίστηκε χέρι. Δοκίμασε πιο καθαρή φωτογραφία με ανοιχτή παλάμη.", 5000);
+        showStatus(t("noHand"), 5000);
       }
     }).catch(function(e){
       console.error(e);
-      showStatus("Σφάλμα ανάλυσης. Έλεγξε τη σύνδεση (φορτώνεται το μοντέλο).", 5000);
+      showStatus(t("analyzeError"), 5000);
     });
   }
 
@@ -505,7 +666,7 @@
         if (len < 4) return;
         var ux = dx/len, uy = dy/len;
 
-        var nh = len*0.85*state.size;            // nail height (along finger)
+        var nh = len*0.85*state.size*(SHAPE_LEN[state.shape]||1); // nail height (along finger)
         var nw = len*0.62*state.size*f.wMul;     // nail width
         var cx = tx + ux*nh*0.12;
         var cy = ty + uy*nh*0.12;
@@ -520,14 +681,55 @@
     });
   }
 
+  // extra length per shape (longer shapes like stiletto extend further)
+  var SHAPE_LEN = { oval:1, round:0.92, square:0.95, squoval:0.95, almond:1.15, stiletto:1.35, coffin:1.25 };
+
   function nailPath(nw, nh){
-    // rounded nail shape: flatter base, round tip (tip is at -y)
+    var w2 = nw/2, h2 = nh/2, s = state.shape;
     ctx.beginPath();
-    ctx.moveTo(-nw/2, nh*0.32);
-    ctx.quadraticCurveTo(-nw/2, -nh*0.5, 0, -nh*0.5);
-    ctx.quadraticCurveTo(nw/2, -nh*0.5, nw/2, nh*0.32);
-    ctx.quadraticCurveTo(nw/2*0.8, nh*0.5, 0, nh*0.5);
-    ctx.quadraticCurveTo(-nw/2*0.8, nh*0.5, -nw/2, nh*0.32);
+
+    if (s === "square" || s === "squoval"){
+      var r = (s === "square") ? nw*0.12 : nw*0.32;
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.lineTo(-w2, -h2 + r);
+      ctx.quadraticCurveTo(-w2, -h2, -w2 + r, -h2);
+      ctx.lineTo(w2 - r, -h2);
+      ctx.quadraticCurveTo(w2, -h2, w2, -h2 + r);
+      ctx.lineTo(w2, nh*0.32);
+    }
+    else if (s === "almond"){
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.bezierCurveTo(-w2, -nh*0.12, -w2*0.4, -nh*0.36, 0, -h2);
+      ctx.bezierCurveTo(w2*0.4, -nh*0.36, w2, -nh*0.12, w2, nh*0.32);
+    }
+    else if (s === "stiletto"){
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.bezierCurveTo(-w2, -nh*0.02, -w2*0.18, -nh*0.28, 0, -h2);
+      ctx.bezierCurveTo(w2*0.18, -nh*0.28, w2, -nh*0.02, w2, nh*0.32);
+    }
+    else if (s === "coffin"){
+      var tw = nw*0.45;
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.lineTo(-tw/2, -h2 + nw*0.06);
+      ctx.quadraticCurveTo(-tw/2, -h2, -tw/2 + nw*0.06, -h2);
+      ctx.lineTo(tw/2 - nw*0.06, -h2);
+      ctx.quadraticCurveTo(tw/2, -h2, tw/2, -h2 + nw*0.06);
+      ctx.lineTo(w2, nh*0.32);
+    }
+    else if (s === "oval"){
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.bezierCurveTo(-w2, -nh*0.42, -w2*0.55, -h2, 0, -h2);
+      ctx.bezierCurveTo(w2*0.55, -h2, w2, -nh*0.42, w2, nh*0.32);
+    }
+    else { // round
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.quadraticCurveTo(-w2, -h2, 0, -h2);
+      ctx.quadraticCurveTo(w2, -h2, w2, nh*0.32);
+    }
+
+    // cuticle side (same for all shapes)
+    ctx.quadraticCurveTo(w2*0.8, nh*0.5, 0, nh*0.5);
+    ctx.quadraticCurveTo(-w2*0.8, nh*0.5, -w2, nh*0.32);
     ctx.closePath();
   }
 
@@ -610,8 +812,10 @@
     a.download = "nail-studio.png";
     a.href = c.toDataURL("image/png");
     a.click();
-    showStatus("Η φωτογραφία αποθηκεύτηκε 📸", 2500);
+    showStatus(t("saved"), 2500);
   });
+
+  applyLang();
 
 })();
 </script>
