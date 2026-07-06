@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nail Studio — Εικονικό Μανικιούρ</title>
+
+<!-- ═══════════════ ANALYTICS (μέτρηση επισκεψιμότητας) ═══════════════
+  ΕΠΙΛΟΓΗ 1 — GoatCounter (εντελώς ΔΩΡΕΑΝ, χωρίς cookies, χωρίς GDPR banner):
+  1. Κάνε εγγραφή στο https://www.goatcounter.com (2 λεπτά)
+  2. Διάλεξε ένα όνομα, π.χ. "nailstudio" → παίρνεις το nailstudio.goatcounter.com
+  3. Αντικατέστησε το MYCODE παρακάτω με το όνομα που διάλεξες
+  4. Στατιστικά: https://MYCODE.goatcounter.com
+-->
+<script data-goatcounter="https://MYCODE.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<!-- ΕΠΙΛΟΓΗ 2 — Google Analytics 4 (δωρεάν, πιο αναλυτικό, θέλει GDPR banner):
+  1. Λογαριασμός στο https://analytics.google.com → Create property
+  2. Πάρε το Measurement ID (μορφή G-XXXXXXXXXX)
+  3. Σβήσε τα σύμβολα σχολίων και βάλε το ID σου στα 2 σημεία
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+-->
+<!-- ═══════════════════════ ΤΕΛΟΣ ANALYTICS ═══════════════════════ -->
+<style>
+  :root{
+    --ink:#2b1526;
+    --plum:#4a1f3d;
+    --blush:#f7e9ee;
+    --cream:#fdf6f2;
+    --gold:#c9973f;
+    --rose:#d4547a;
+    --line:#e8d4dd;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--cream);color:var(--ink);
+    display:flex;flex-direction:column;
+    height:100dvh;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--plum);color:#fff;
+    padding:10px 16px 8px;
+    display:flex;align-items:baseline;gap:10px;
+    flex-shrink:0;
+  }
+  header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+  header h1 .logoIcon{flex-shrink:0}
+  header p{font-size:.72rem;opacity:.75}
+  #langBtn{
+    margin-left:auto;flex-shrink:0;cursor:pointer;
+    border:1.5px solid rgba(255,255,255,.45);background:transparent;color:#fff;
+    border-radius:999px;padding:4px 12px;font-size:.75rem;font-weight:700;letter-spacing:.05em;
+  }
+  #langBtn:active{transform:scale(.95)}
+
+  /* Nail-themed background pattern (light strokes for dark bg, plum for blush bg) */
+  .nailPatternDark{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'><g fill='none' stroke='white' stroke-opacity='0.09' stroke-width='1.6' stroke-linejoin='round'><g transform='translate(24,18)'><rect x='3' y='0' width='10' height='8' rx='2'/><path d='M4 12 q0-3 3-3 h2 q3 0 3 3 v10 q0 5 -4 5 q-4 0 -4 -5 z'/></g><path d='M100 22 q8 13 0 20 q-8 -7 0 -20 z'/><path d='M40 92 q9 0 9 15 q0 9 -9 12 q-9 -3 -9 -12 q0 -15 9 -15 z'/><path d='M108 96 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 z'/><path d='M78 130 q6 0 6 10 q0 6 -6 8 q-6 -2 -6 -8 q0 -10 6 -10 z'/></g></svg>"),
+    linear-gradient(170deg,#31142a 0%,#1a0e17 100%);
+    background-size:150px 150px, cover;
+  }
+  .nailPatternLight{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'><g fill='none' stroke='%234a1f3d' stroke-opacity='0.06' stroke-width='1.6' stroke-linejoin='round'><g transform='translate(24,18)'><rect x='3' y='0' width='10' height='8' rx='2'/><path d='M4 12 q0-3 3-3 h2 q3 0 3 3 v10 q0 5 -4 5 q-4 0 -4 -5 z'/></g><path d='M100 22 q8 13 0 20 q-8 -7 0 -20 z'/><path d='M40 92 q9 0 9 15 q0 9 -9 12 q-9 -3 -9 -12 q0 -15 9 -15 z'/><path d='M108 96 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 z'/><path d='M78 130 q6 0 6 10 q0 6 -6 8 q-6 -2 -6 -8 q0 -10 6 -10 z'/></g></svg>");
+    background-size:150px 150px;
+  }
+
+  /* ---------- Stage (camera / photo) ---------- */
+  #stage{
+    position:relative;flex:1;min-height:0;
+    background:#1a0e17;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #viewWrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  #video,#photoImg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:100%;max-height:100%;}
+  #overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+  #viewWrap.mirror #video,#viewWrap.mirror #overlay{transform:translate(-50%,-50%) scaleX(-1)}
+
+  /* Start / status panel */
+  #startPanel{
+    position:absolute;inset:0;z-index:5;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;padding:24px;text-align:center;color:#fff;
+  }
+  #startPanel .bottle{font-size:2.6rem}
+  #startPanel h2{font-size:1.15rem;font-weight:700}
+  #startPanel p{font-size:.85rem;opacity:.8;max-width:300px;line-height:1.5}
+  .bigBtn{
+    border:none;border-radius:999px;cursor:pointer;
+    padding:13px 26px;font-size:.95rem;font-weight:700;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .bigBtn.primary{background:var(--rose);color:#fff}
+  .bigBtn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45)}
+  .bigBtn:active{transform:scale(.97)}
+
+  #statusMsg{
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    z-index:6;background:rgba(43,21,38,.85);color:#fff;
+    font-size:.78rem;padding:7px 14px;border-radius:999px;
+    max-width:92%;text-align:center;display:none;
+  }
+
+  /* Floating stage buttons */
+  .stageBtns{
+    position:absolute;right:10px;top:10px;z-index:6;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .roundBtn{
+    width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(43,21,38,.72);color:#fff;font-size:1.1rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .roundBtn:active{transform:scale(.94)}
+
+  #shotBtn{
+    position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    z-index:6;width:60px;height:60px;border-radius:50%;
+    border:4px solid #fff;background:var(--rose);cursor:pointer;display:none;
+  }
+  #shotBtn:active{transform:translateX(-50%) scale(.93)}
+
+  /* ---------- Bottom panel ---------- */
+  #panel{background:var(--blush);border-top:1px solid var(--line);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+
+  .tabs{display:flex;gap:6px;padding:8px 12px 2px;overflow-x:auto;scrollbar-width:none;align-items:center}
+  .tabs::-webkit-scrollbar{display:none}
+  .rowLabel{font-size:.68rem;font-weight:700;color:var(--plum);opacity:.65;flex:0 0 auto;width:46px}
+  .tab{
+    border:1.5px solid var(--line);background:#fff;color:var(--ink);
+    border-radius:999px;padding:6px 14px;font-size:.8rem;font-weight:600;
+    white-space:nowrap;cursor:pointer;
+  }
+  .tab.active{background:var(--plum);border-color:var(--plum);color:#fff}
+
+  .swatches{
+    display:flex;gap:10px;padding:10px 12px 6px;overflow-x:auto;scrollbar-width:none;
+  }
+  .swatches::-webkit-scrollbar{display:none}
+  .swatch{
+    flex:0 0 auto;width:40px;height:40px;border-radius:50%;cursor:pointer;
+    border:2.5px solid #fff;box-shadow:0 1px 4px rgba(43,21,38,.22);
+    position:relative;
+  }
+  .swatch::after{ /* gloss sheen */
+    content:"";position:absolute;top:5px;left:8px;width:11px;height:7px;
+    border-radius:50%;background:rgba(255,255,255,.55);transform:rotate(-25deg);
+  }
+  .swatch.active{outline:3px solid var(--gold);outline-offset:2px}
+  .swatch .name{
+    position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);
+    font-size:.55rem;color:var(--ink);white-space:nowrap;opacity:.7;
+  }
+
+  .controls{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 14px 12px;flex-wrap:wrap;
+  }
+  .ctrl{display:flex;align-items:center;gap:7px;font-size:.75rem;font-weight:600}
+  input[type=range]{width:110px;accent-color:var(--rose)}
+  .toggle{
+    display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;
+  }
+  .toggle button{
+    border:none;background:transparent;padding:6px 11px;font-size:.72rem;font-weight:600;cursor:pointer;color:var(--ink);
+  }
+  .toggle button.active{background:var(--gold);color:#fff}
+
+  @media (min-width:700px){
+    .swatch{width:46px;height:46px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <svg class="logoIcon" viewBox="0 0 24 34" width="19" height="27" aria-hidden="true">
+      <rect x="8" y="0" width="8" height="9" rx="2" fill="#c9973f"/>
+      <rect x="10.5" y="8" width="3" height="6" fill="#a87c2f"/>
+      <path d="M5 16 q0 -4 4 -4 h6 q4 0 4 4 v11 q0 6 -7 6 q-7 0 -7 -6 z" fill="#d4547a"/>
+      <ellipse cx="9.5" cy="22" rx="2" ry="4" fill="rgba(255,255,255,.4)"/>
+    </svg>
+    NAIL STUDIO
+  </h1>
+  <p data-i18n="tagline">Δοκίμασε βερνίκι στα νύχια σου, ζωντανά</p>
+  <button id="langBtn" title="Language">EN</button>
+</header>
+
+<div id="stage">
+  <div id="viewWrap">
+    <video id="video" autoplay playsinline muted></video>
+    <img id="photoImg" alt="" style="display:none">
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <div id="startPanel" class="nailPatternDark">
+    <div class="bottle">
+      <svg viewBox="0 0 60 46" width="110" height="84" aria-hidden="true">
+        <!-- polish bottle -->
+        <g transform="translate(6,2)">
+          <rect x="9" y="0" width="10" height="11" rx="2.5" fill="#c9973f"/>
+          <rect x="12" y="10" width="4" height="7" fill="#a87c2f"/>
+          <path d="M5 21 q0 -5 5 -5 h8 q5 0 5 5 v13 q0 8 -9 8 q-9 0 -9 -8 z" fill="#d4547a"/>
+          <ellipse cx="11" cy="29" rx="2.6" ry="5" fill="rgba(255,255,255,.4)"/>
+        </g>
+        <!-- drop -->
+        <path d="M44 14 q6 10 0 15 q-6 -5 0 -15 z" fill="#c9973f"/>
+        <!-- sparkle -->
+        <path d="M52 32 l1.8 4.4 l4.4 1.8 l-4.4 1.8 l-1.8 4.4 l-1.8 -4.4 l-4.4 -1.8 l4.4 -1.8 z" fill="#f2c1cf"/>
+      </svg>
+    </div>
+    <h2 data-i18n="welcomeTitle">Καλώς ήρθες στο εικονικό μανικιούρ</h2>
+    <p data-i18n="welcomeText">Δείξε το χέρι σου στην κάμερα και δες πώς σου πάει κάθε χρώμα. Αν η κάμερα δεν είναι διαθέσιμη, ανέβασε μια φωτογραφία του χεριού σου.</p>
+    <button class="bigBtn primary" id="startCamBtn" data-i18n="openCamera">📷 Άνοιγμα κάμερας</button>
+    <button class="bigBtn ghost" id="uploadBtn1" data-i18n="uploadPhoto">🖼️ Ανέβασε φωτογραφία</button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+  </div>
+
+  <div id="statusMsg"></div>
+
+  <div class="stageBtns" id="stageBtns" style="display:none">
+    <button class="roundBtn" id="flipBtn" title="Αλλαγή κάμερας">🔄</button>
+    <button class="roundBtn" id="uploadBtn2" title="Φωτογραφία">🖼️</button>
+    <button class="roundBtn" id="closeBtn" title="Κλείσιμο">✕</button>
+  </div>
+
+  <button id="shotBtn" title="Λήψη φωτογραφίας"></button>
+</div>
+
+<div id="panel" class="nailPatternLight">
+  <div class="tabs" id="effectTabs">
+    <span class="rowLabel" data-i18n="effect">Εφέ</span>
+    <button class="tab active" data-effect="plain" data-i18n="plain">Απλό</button>
+    <button class="tab" data-effect="french" data-i18n="french">Γαλλικό</button>
+    <button class="tab" data-effect="glitter">Glitter</button>
+    <button class="tab" data-effect="ombre">Ombre</button>
+  </div>
+
+  <div class="tabs" id="shapeTabs">
+    <span class="rowLabel" data-i18n="shape">Σχήμα</span>
+    <button class="tab active" data-shape="oval" data-i18n="oval">Οβάλ</button>
+    <button class="tab" data-shape="round" data-i18n="round">Στρογγυλό</button>
+    <button class="tab" data-shape="square" data-i18n="square">Τετράγωνο</button>
+    <button class="tab" data-shape="squoval">Squoval</button>
+    <button class="tab" data-shape="almond" data-i18n="almond">Αμύγδαλο</button>
+    <button class="tab" data-shape="stiletto" data-i18n="stiletto">Στιλέτο</button>
+    <button class="tab" data-shape="coffin" data-i18n="coffin">Μπαλαρίνα</button>
+  </div>
+
+  <div class="swatches" id="swatches"></div>
+
+  <div class="controls">
+    <div class="ctrl">
+      <span data-i18n="size">Μέγεθος</span>
+      <input type="range" id="sizeSlider" min="0.6" max="1.6" step="0.05" value="1">
+    </div>
+    <div class="ctrl">
+      <span data-i18n="finish">Φινίρισμα</span>
+      <div class="toggle" id="finishToggle">
+        <button class="active" data-finish="gloss" data-i18n="gloss">Γυαλιστερό</button>
+        <button data-finish="matte" data-i18n="matte">Ματ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MediaPipe Hands -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- i18n ---------------- */
+  var I18N = {
+    el: {
+      tagline:"Δοκίμασε βερνίκι στα νύχια σου, ζωντανά",
+      welcomeTitle:"Καλώς ήρθες στο εικονικό μανικιούρ",
+      welcomeText:"Δείξε το χέρι σου στην κάμερα και δες πώς σου πάει κάθε χρώμα. Αν η κάμερα δεν είναι διαθέσιμη, ανέβασε μια φωτογραφία του χεριού σου.",
+      openCamera:"📷 Άνοιγμα κάμερας",
+      uploadPhoto:"🖼️ Ανέβασε φωτογραφία",
+      effect:"Εφέ", shape:"Σχήμα",
+      plain:"Απλό", french:"Γαλλικό",
+      oval:"Οβάλ", round:"Στρογγυλό", square:"Τετράγωνο",
+      almond:"Αμύγδαλο", stiletto:"Στιλέτο", coffin:"Μπαλαρίνα",
+      size:"Μέγεθος", finish:"Φινίρισμα", gloss:"Γυαλιστερό", matte:"Ματ",
+      flipCam:"Αλλαγή κάμερας", photoBtn:"Φωτογραφία", closeBtn:"Κλείσιμο", shot:"Λήψη φωτογραφίας",
+      openingCam:"Άνοιγμα κάμερας…",
+      showNails:"Δείξε τα νύχια σου στην κάμερα 👋",
+      camDenied:"Δεν επιτράπηκε η πρόσβαση στην κάμερα.",
+      needHttps:" Χρειάζεται σύνδεση HTTPS.",
+      tryUpload:" Μπορείς να ανεβάσεις φωτογραφία.",
+      noCamSupport:"Η κάμερα δεν υποστηρίζεται εδώ. Δοκίμασε ανέβασμα φωτογραφίας.",
+      analyzing:"Ανάλυση φωτογραφίας…",
+      noHand:"Δεν εντοπίστηκε χέρι. Δοκίμασε πιο καθαρή φωτογραφία με ανοιχτή παλάμη.",
+      analyzeError:"Σφάλμα ανάλυσης. Έλεγξε τη σύνδεση (φορτώνεται το μοντέλο).",
+      saved:"Η φωτογραφία αποθηκεύτηκε 📸"
+    },
+    en: {
+      tagline:"Try nail polish on your nails, live",
+      welcomeTitle:"Welcome to the virtual manicure",
+      welcomeText:"Show your hand to the camera and see how each color suits you. If the camera isn't available, upload a photo of your hand.",
+      openCamera:"📷 Open camera",
+      uploadPhoto:"🖼️ Upload a photo",
+      effect:"Effect", shape:"Shape",
+      plain:"Plain", french:"French",
+      oval:"Oval", round:"Round", square:"Square",
+      almond:"Almond", stiletto:"Stiletto", coffin:"Coffin",
+      size:"Size", finish:"Finish", gloss:"Glossy", matte:"Matte",
+      flipCam:"Switch camera", photoBtn:"Photo", closeBtn:"Close", shot:"Take a photo",
+      openingCam:"Opening camera…",
+      showNails:"Show your nails to the camera 👋",
+      camDenied:"Camera access was denied.",
+      needHttps:" An HTTPS connection is required.",
+      tryUpload:" You can upload a photo instead.",
+      noCamSupport:"Camera is not supported here. Try uploading a photo.",
+      analyzing:"Analyzing photo…",
+      noHand:"No hand detected. Try a clearer photo with an open palm.",
+      analyzeError:"Analysis error. Check your connection (the model is loading).",
+      saved:"Photo saved 📸"
+    }
+  };
+
+  /* ---------------- Palette ---------------- */
+  var COLORS = [
+    {el:"Κλασικό κόκκινο", en:"Classic red",  c:"#c1121f"},
+    {el:"Κεράσι",          en:"Cherry",       c:"#8f0f1e"},
+    {el:"Μπορντό",         en:"Burgundy",     c:"#5e0b23"},
+    {el:"Κρασί",           en:"Wine",         c:"#722f4b"},
+    {el:"Κοραλί",          en:"Coral",        c:"#f26b5b"},
+    {el:"Ροδακινί",        en:"Peach",        c:"#f4a58a"},
+    {el:"Nude",            en:"Nude",         c:"#d9b3a0"},
+    {el:"Ροζ απαλό",       en:"Soft pink",    c:"#f2c1cf"},
+    {el:"Έντονο ροζ",      en:"Hot pink",     c:"#e83e8c"},
+    {el:"Φούξια",          en:"Fuchsia",      c:"#b5179e"},
+    {el:"Λεβάντα",         en:"Lavender",     c:"#b39ddb"},
+    {el:"Λιλά",            en:"Lilac",        c:"#8e6bbf"},
+    {el:"Μπλε ναυτικό",    en:"Navy blue",    c:"#1d3557"},
+    {el:"Γαλάζιο",         en:"Sky blue",     c:"#7bbcd5"},
+    {el:"Πετρόλ",          en:"Teal",         c:"#0f766e"},
+    {el:"Σμαραγδί",        en:"Emerald",      c:"#0e7a45"},
+    {el:"Μαύρο",           en:"Black",        c:"#161215"},
+    {el:"Λευκό",           en:"White",        c:"#f5f2f0"},
+    {el:"Χρυσό",           en:"Gold",         c:"#c9973f"},
+    {el:"Ασημί",           en:"Silver",       c:"#a8aab0"},
+    {el:"Σοκολατί",        en:"Chocolate",    c:"#5b3a29"}
+  ];
+
+  var state = {
+    lang: "el",
+    color: COLORS[0].c,
+    effect: "plain",
+    shape: "oval",
+    size: 1,
+    finish: "gloss",
+    mode: "none",          // none | camera | photo
+    facing: "environment", // environment | user
+    stream: null,
+    running: false
+  };
+
+  /* ---------------- DOM ---------------- */
+  var video   = document.getElementById("video");
+  var photoImg= document.getElementById("photoImg");
+  var overlay = document.getElementById("overlay");
+  var ctx     = overlay.getContext("2d");
+  var viewWrap= document.getElementById("viewWrap");
+  var startPanel = document.getElementById("startPanel");
+  var statusMsg  = document.getElementById("statusMsg");
+  var stageBtns  = document.getElementById("stageBtns");
+  var shotBtn    = document.getElementById("shotBtn");
+  var fileInput  = document.getElementById("fileInput");
+
+  function showStatus(t, ms){
+    statusMsg.textContent = t;
+    statusMsg.style.display = "block";
+    if (ms) setTimeout(function(){ statusMsg.style.display = "none"; }, ms);
+  }
+  function hideStatus(){ statusMsg.style.display = "none"; }
+
+  /* ---------------- Language ---------------- */
+  function t(key){ return I18N[state.lang][key] || key; }
+
+  function applyLang(){
+    document.documentElement.lang = state.lang;
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.getElementById("langBtn").textContent = (state.lang === "el") ? "EN" : "ΕΛ";
+    document.getElementById("flipBtn").title = t("flipCam");
+    document.getElementById("uploadBtn2").title = t("photoBtn");
+    document.getElementById("closeBtn").title = t("closeBtn");
+    shotBtn.title = t("shot");
+    // swatch tooltips
+    var sws = swBox.querySelectorAll(".swatch");
+    sws.forEach(function(s, i){ s.title = COLORS[i][state.lang]; });
+  }
+
+  document.getElementById("langBtn").addEventListener("click", function(){
+    state.lang = (state.lang === "el") ? "en" : "el";
+    applyLang();
+  });
+
+  /* ---------------- Swatches UI ---------------- */
+  var swBox = document.getElementById("swatches");
+  COLORS.forEach(function(col, i){
+    var d = document.createElement("div");
+    d.className = "swatch" + (i===0 ? " active" : "");
+    d.style.background = col.c;
+    d.title = col[state.lang];
+    d.addEventListener("click", function(){
+      state.color = col.c;
+      swBox.querySelectorAll(".swatch").forEach(function(s){ s.classList.remove("active"); });
+      d.classList.add("active");
+      if (state.mode === "photo") processPhoto();
+    });
+    swBox.appendChild(d);
+  });
+
+  document.getElementById("effectTabs").addEventListener("click", function(e){
+    var t = e.target.closest(".tab");
+    if (!t) return;
+    state.effect = t.dataset.effect;
+    this.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
+    t.classList.add("active");
+    if (state.mode === "photo") processPhoto();
+  });
+
+  document.getElementById("shapeTabs").addEventListener("click", function(e){
+    var t = e.target.closest(".tab");
+    if (!t) return;
+    state.shape = t.dataset.shape;
+    this.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
+    t.classList.add("active");
+    if (state.mode === "photo") drawPhotoFrame();
+  });
+
+  document.getElementById("sizeSlider").addEventListener("input", function(){
+    state.size = parseFloat(this.value);
+    if (state.mode === "photo") drawPhotoFrame();
+  });
+
+  document.getElementById("finishToggle").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b) return;
+    state.finish = b.dataset.finish;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    if (state.mode === "photo") drawPhotoFrame();
+  });
+
+  /* ---------------- MediaPipe Hands ---------------- */
+  var hands = null;
+  var lastResults = null;
+
+  function initHands(){
+    if (hands) return hands;
+    hands = new Hands({
+      locateFile: function(f){
+        return "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" + f;
+      }
+    });
+    hands.setOptions({
+      maxNumHands: 2,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.5
+    });
+    hands.onResults(onResults);
+    return hands;
+  }
+
+  function onResults(results){
+    lastResults = results;
+    if (state.mode === "camera") drawFrame(video.videoWidth, video.videoHeight);
+    else if (state.mode === "photo") drawPhotoFrame();
+  }
+
+  /* ---------------- Camera ---------------- */
+  document.getElementById("startCamBtn").addEventListener("click", startCamera);
+  document.getElementById("flipBtn").addEventListener("click", function(){
+    state.facing = (state.facing === "environment") ? "user" : "environment";
+    startCamera();
+  });
+  document.getElementById("closeBtn").addEventListener("click", stopAll);
+  document.getElementById("uploadBtn1").addEventListener("click", function(){ fileInput.click(); });
+  document.getElementById("uploadBtn2").addEventListener("click", function(){ fileInput.click(); });
+
+  function stopStream(){
+    if (state.stream){
+      state.stream.getTracks().forEach(function(t){ t.stop(); });
+      state.stream = null;
+    }
+  }
+
+  function startCamera(){
+    stopStream();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      showStatus(t("noCamSupport"), 5000);
+      return;
+    }
+    showStatus(t("openingCam"));
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: state.facing, width:{ideal:1280}, height:{ideal:720} },
+      audio: false
+    }).then(function(stream){
+      state.stream = stream;
+      state.mode = "camera";
+      video.srcObject = stream;
+      video.style.display = "";
+      photoImg.style.display = "none";
+      startPanel.style.display = "none";
+      stageBtns.style.display = "flex";
+      shotBtn.style.display = "block";
+      viewWrap.classList.toggle("mirror", state.facing === "user");
+      video.onloadedmetadata = function(){
+        video.play();
+        overlay.width = video.videoWidth;
+        overlay.height = video.videoHeight;
+        fitElement(video); fitElement(overlay);
+        hideStatus();
+        showStatus(t("showNails"), 3500);
+        state.running = true;
+        loop();
+      };
+    }).catch(function(err){
+      console.error(err);
+      var msg = t("camDenied");
+      if (location.protocol !== "https:" && location.hostname !== "localhost")
+        msg += t("needHttps");
+      msg += t("tryUpload");
+      showStatus(msg, 6000);
+    });
+  }
+
+  function fitElement(el){
+    // scale to contain within stage keeping aspect
+    var st = document.getElementById("stage");
+    var sw = st.clientWidth, sh = st.clientHeight;
+    var vw = overlay.width, vh = overlay.height;
+    if (!vw || !vh) return;
+    var sc = Math.min(sw/vw, sh/vh);
+    el.style.width  = (vw*sc) + "px";
+    el.style.height = (vh*sc) + "px";
+  }
+  window.addEventListener("resize", function(){
+    fitElement(video); fitElement(overlay); fitElement(photoImg);
+  });
+
+  var busy = false;
+  function loop(){
+    if (!state.running || state.mode !== "camera") return;
+    if (!busy && video.readyState >= 2){
+      busy = true;
+      initHands().send({image: video}).then(function(){ busy = false; })
+        .catch(function(){ busy = false; });
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function stopAll(){
+    state.running = false;
+    state.mode = "none";
+    stopStream();
+    video.style.display = "none";
+    photoImg.style.display = "none";
+    ctx.clearRect(0,0,overlay.width,overlay.height);
+    stageBtns.style.display = "none";
+    shotBtn.style.display = "none";
+    startPanel.style.display = "flex";
+    hideStatus();
+  }
+
+  /* ---------------- Photo mode ---------------- */
+  fileInput.addEventListener("change", function(){
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var url = URL.createObjectURL(f);
+    photoImg.onload = function(){
+      state.running = false;
+      stopStream();
+      state.mode = "photo";
+      video.style.display = "none";
+      photoImg.style.display = "";
+      startPanel.style.display = "none";
+      stageBtns.style.display = "flex";
+      shotBtn.style.display = "block";
+      viewWrap.classList.remove("mirror");
+      overlay.width = photoImg.naturalWidth;
+      overlay.height = photoImg.naturalHeight;
+      fitElement(photoImg); fitElement(overlay);
+      showStatus(t("analyzing"));
+      processPhoto();
+    };
+    photoImg.src = url;
+    this.value = "";
+  });
+
+  function processPhoto(){
+    if (state.mode !== "photo") return;
+    initHands().send({image: photoImg}).then(function(){
+      hideStatus();
+      if (!lastResults || !lastResults.multiHandLandmarks || !lastResults.multiHandLandmarks.length){
+        showStatus(t("noHand"), 5000);
+      }
+    }).catch(function(e){
+      console.error(e);
+      showStatus(t("analyzeError"), 5000);
+    });
+  }
+
+  function drawPhotoFrame(){
+    drawFrame(overlay.width, overlay.height);
+  }
+
+  /* ---------------- Nail rendering ---------------- */
+  // fingertip landmark index -> joint below it
+  var FINGERS = [
+    {tip:4,  low:3,  wMul:1.15}, // thumb
+    {tip:8,  low:7,  wMul:1.0},
+    {tip:12, low:11, wMul:1.05},
+    {tip:16, low:15, wMul:1.0},
+    {tip:20, low:19, wMul:0.9}
+  ];
+
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function shade(hex, amt){ // amt -1..1
+    var n = parseInt(hex.slice(1),16);
+    var r = (n>>16)&255, g = (n>>8)&255, b = n&255;
+    function ch(v){ return Math.max(0, Math.min(255, Math.round(amt>0 ? v+(255-v)*amt : v*(1+amt)))); }
+    return "rgb(" + ch(r) + "," + ch(g) + "," + ch(b) + ")";
+  }
+
+  function drawFrame(w, h){
+    if (!w || !h) return;
+    ctx.clearRect(0,0,w,h);
+    if (!lastResults || !lastResults.multiHandLandmarks) return;
+
+    lastResults.multiHandLandmarks.forEach(function(lm, hi){
+      FINGERS.forEach(function(f, fi){
+        var tip = lm[f.tip], low = lm[f.low];
+        var tx = tip.x*w, ty = tip.y*h;
+        var lx = low.x*w, ly = low.y*h;
+        var dx = tx-lx, dy = ty-ly;
+        var len = Math.sqrt(dx*dx+dy*dy);
+        if (len < 4) return;
+        var ux = dx/len, uy = dy/len;
+
+        var nh = len*0.85*state.size*(SHAPE_LEN[state.shape]||1); // nail height (along finger)
+        var nw = len*0.62*state.size*f.wMul;     // nail width
+        var cx = tx + ux*nh*0.12;
+        var cy = ty + uy*nh*0.12;
+        var ang = Math.atan2(dy,dx) + Math.PI/2;
+
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(ang);
+        drawNail(nw, nh, hi, fi);
+        ctx.restore();
+      });
+    });
+  }
+
+  // extra length per shape (longer shapes like stiletto extend further)
+  var SHAPE_LEN = { oval:1, round:0.92, square:0.95, squoval:0.95, almond:1.15, stiletto:1.35, coffin:1.25 };
+
+  function nailPath(nw, nh){
+    var w2 = nw/2, h2 = nh/2, s = state.shape;
+    ctx.beginPath();
+
+    if (s === "square" || s === "squoval"){
+      var r = (s === "square") ? nw*0.12 : nw*0.32;
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.lineTo(-w2, -h2 + r);
+      ctx.quadraticCurveTo(-w2, -h2, -w2 + r, -h2);
+      ctx.lineTo(w2 - r, -h2);
+      ctx.quadraticCurveTo(w2, -h2, w2, -h2 + r);
+      ctx.lineTo(w2, nh*0.32);
+    }
+    else if (s === "almond"){
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.bezierCurveTo(-w2, -nh*0.12, -w2*0.4, -nh*0.36, 0, -h2);
+      ctx.bezierCurveTo(w2*0.4, -nh*0.36, w2, -nh*0.12, w2, nh*0.32);
+    }
+    else if (s === "stiletto"){
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.bezierCurveTo(-w2, -nh*0.02, -w2*0.18, -nh*0.28, 0, -h2);
+      ctx.bezierCurveTo(w2*0.18, -nh*0.28, w2, -nh*0.02, w2, nh*0.32);
+    }
+    else if (s === "coffin"){
+      var tw = nw*0.45;
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.lineTo(-tw/2, -h2 + nw*0.06);
+      ctx.quadraticCurveTo(-tw/2, -h2, -tw/2 + nw*0.06, -h2);
+      ctx.lineTo(tw/2 - nw*0.06, -h2);
+      ctx.quadraticCurveTo(tw/2, -h2, tw/2, -h2 + nw*0.06);
+      ctx.lineTo(w2, nh*0.32);
+    }
+    else if (s === "oval"){
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.bezierCurveTo(-w2, -nh*0.42, -w2*0.55, -h2, 0, -h2);
+      ctx.bezierCurveTo(w2*0.55, -h2, w2, -nh*0.42, w2, nh*0.32);
+    }
+    else { // round
+      ctx.moveTo(-w2, nh*0.32);
+      ctx.quadraticCurveTo(-w2, -h2, 0, -h2);
+      ctx.quadraticCurveTo(w2, -h2, w2, nh*0.32);
+    }
+
+    // cuticle side (same for all shapes)
+    ctx.quadraticCurveTo(w2*0.8, nh*0.5, 0, nh*0.5);
+    ctx.quadraticCurveTo(-w2*0.8, nh*0.5, -w2, nh*0.32);
+    ctx.closePath();
+  }
+
+  function drawNail(nw, nh, handIdx, fingerIdx){
+    var col = state.color;
+    ctx.globalAlpha = 0.88;
+
+    nailPath(nw, nh);
+    ctx.save();
+    ctx.clip();
+
+    if (state.effect === "plain"){
+      ctx.fillStyle = col;
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+    }
+    else if (state.effect === "french"){
+      ctx.fillStyle = "rgba(224,190,175,0.75)"; // nude base
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.ellipse(0, -nh*0.52, nw*0.75, nh*0.34, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+    else if (state.effect === "ombre"){
+      var g = ctx.createLinearGradient(0, nh/2, 0, -nh/2);
+      g.addColorStop(0, shade(col, 0.55));
+      g.addColorStop(1, col);
+      ctx.fillStyle = g;
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+    }
+    else if (state.effect === "glitter"){
+      ctx.fillStyle = col;
+      ctx.fillRect(-nw, -nh, nw*2, nh*2);
+      var rnd = mulberry32(handIdx*97 + fingerIdx*31 + 7);
+      var t = Date.now()/450;
+      for (var i=0; i<16; i++){
+        var px = (rnd()-0.5)*nw*0.9;
+        var py = (rnd()-0.5)*nh*0.9;
+        var pr = 0.6 + rnd()*1.4;
+        var tw = 0.45 + 0.55*Math.abs(Math.sin(t + i*1.7));
+        ctx.fillStyle = "rgba(255,255,255," + (tw*0.9).toFixed(2) + ")";
+        ctx.beginPath();
+        ctx.arc(px, py, pr * Math.max(nw/26,1), 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // gloss highlight
+    if (state.finish === "gloss"){
+      ctx.fillStyle = "rgba(255,255,255,0.32)";
+      ctx.beginPath();
+      ctx.ellipse(-nw*0.18, -nh*0.16, nw*0.22, nh*0.3, -0.35, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    // soft outline for definition
+    ctx.globalAlpha = 0.45;
+    nailPath(nw, nh);
+    ctx.strokeStyle = shade(col, -0.35);
+    ctx.lineWidth = Math.max(nw/22, 0.8);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------------- Screenshot ---------------- */
+  shotBtn.addEventListener("click", function(){
+    var w = overlay.width, h = overlay.height;
+    if (!w || !h) return;
+    var c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    var cc = c.getContext("2d");
+    var mirrored = viewWrap.classList.contains("mirror");
+    if (mirrored){ cc.translate(w,0); cc.scale(-1,1); }
+    if (state.mode === "camera") cc.drawImage(video, 0, 0, w, h);
+    else if (state.mode === "photo") cc.drawImage(photoImg, 0, 0, w, h);
+    cc.drawImage(overlay, 0, 0);
+    var a = document.createElement("a");
+    a.download = "nail-studio.png";
+    a.href = c.toDataURL("image/png");
+    a.click();
+    showStatus(t("saved"), 2500);
+  });
+
+  applyLang();
+
+})();
+</script>
+</body>
+</html>
