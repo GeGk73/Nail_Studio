@@ -132,7 +132,12 @@
   #shotBtn:active{transform:translateX(-50%) scale(.93)}
 
   /* ---------- Bottom panel ---------- */
-  #panel{background:var(--blush);border-top:1px solid var(--line);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+  #panel{background:var(--blush);border-top:1px solid var(--line);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);position:relative}
+  #credit{
+    position:absolute;right:10px;bottom:calc(6px + env(safe-area-inset-bottom));
+    font-size:.62rem;color:var(--plum);opacity:.55;letter-spacing:.04em;
+    pointer-events:none;
+  }
 
   .tabs{display:flex;gap:6px;padding:8px 12px 2px;overflow-x:auto;scrollbar-width:none;align-items:center}
   .tabs::-webkit-scrollbar{display:none}
@@ -274,6 +279,8 @@
       </div>
     </div>
   </div>
+
+  <span id="credit">@Ge_Gk</span>
 </div>
 
 <!-- MediaPipe Hands -->
