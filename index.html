@@ -482,7 +482,7 @@
     hands.setOptions({
       maxNumHands: 2,
       modelComplexity: 1,
-      minDetectionConfidence: 0.6,
+      minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5
     });
     hands.onResults(onResults);
@@ -491,8 +491,47 @@
 
   function onResults(results){
     lastResults = results;
-    if (state.mode === "camera") drawFrame(video.videoWidth, video.videoHeight);
-    else if (state.mode === "photo") drawPhotoFrame();
+    if (state.mode === "camera"){
+      drawFrame(video.videoWidth, video.videoHeight, smoothLandmarks(results));
+    } else if (state.mode === "photo"){
+      drawPhotoFrame();
+    }
+  }
+
+  /* ---- Anti-flicker: smoothing + short persistence ---- */
+  var smoothHands = [];   // smoothed landmarks per hand
+  var lastSeen = 0;       // when a hand was last detected
+
+  function resetSmoothing(){ smoothHands.length = 0; lastSeen = 0; }
+
+  function smoothLandmarks(results){
+    var now = Date.now();
+    var det = results.multiHandLandmarks || [];
+    if (det.length){
+      lastSeen = now;
+      for (var h = 0; h < det.length; h++){
+        var lm = det[h];
+        if (!smoothHands[h] || smoothHands[h].length !== lm.length){
+          smoothHands[h] = lm.map(function(p){ return {x:p.x, y:p.y}; });
+        } else {
+          var prev = smoothHands[h];
+          for (var i = 0; i < lm.length; i++){
+            var dx = lm[i].x - prev[i].x, dy = lm[i].y - prev[i].y;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            // adaptive: still hand -> heavy smoothing (stable),
+            // fast movement -> follow quickly (no lag)
+            var a = Math.min(1, 0.22 + dist * 20);
+            prev[i].x += dx * a;
+            prev[i].y += dy * a;
+          }
+        }
+      }
+      smoothHands.length = det.length;
+    } else if (now - lastSeen > 350){
+      // hand truly gone -> clear; brief dropouts keep the last position
+      smoothHands.length = 0;
+    }
+    return smoothHands;
   }
 
   /* ---------------- Camera ---------------- */
@@ -523,6 +562,7 @@
       video: { facingMode: state.facing, width:{ideal:1280}, height:{ideal:720} },
       audio: false
     }).then(function(stream){
+      resetSmoothing();
       state.stream = stream;
       state.mode = "camera";
       video.srcObject = stream;
@@ -579,6 +619,7 @@
 
   function stopAll(){
     state.running = false;
+    resetSmoothing();
     state.mode = "none";
     stopStream();
     video.style.display = "none";
@@ -629,7 +670,8 @@
   }
 
   function drawPhotoFrame(){
-    drawFrame(overlay.width, overlay.height);
+    var lms = (lastResults && lastResults.multiHandLandmarks) || [];
+    drawFrame(overlay.width, overlay.height, lms);
   }
 
   /* ---------------- Nail rendering ---------------- */
@@ -658,12 +700,12 @@
     return "rgb(" + ch(r) + "," + ch(g) + "," + ch(b) + ")";
   }
 
-  function drawFrame(w, h){
+  function drawFrame(w, h, handsList){
     if (!w || !h) return;
     ctx.clearRect(0,0,w,h);
-    if (!lastResults || !lastResults.multiHandLandmarks) return;
+    if (!handsList || !handsList.length) return;
 
-    lastResults.multiHandLandmarks.forEach(function(lm, hi){
+    handsList.forEach(function(lm, hi){
       FINGERS.forEach(function(f, fi){
         var tip = lm[f.tip], low = lm[f.low];
         var tx = tip.x*w, ty = tip.y*h;
